@@ -3,7 +3,6 @@
   "root": true,
   "extends": [
     "next/core-web-vitals",
-    "turbo",
     "prettier",
     "plugin:tailwindcss/recommended"
   ],
@@ -13,8 +12,7 @@
   "rules": {
     "@next/next/no-html-link-for-pages": "off",
     "tailwindcss/no-custom-classname": "off",
-    "tailwindcss/classnames-order": "error",
-    "no-unused-vars": "error"
+    "tailwindcss/classnames-order": "error"
   },
   "settings": {
     "tailwindcss": {
@@ -23,11 +21,6 @@
         "cva"
       ],
       "config": "tailwind.config.cjs"
-    },
-    "next": {
-      "rootDir": [
-        "apps/*/"
-      ]
     }
   },
   "overrides": [

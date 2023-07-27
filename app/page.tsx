@@ -1,4 +1,4 @@
-import ScoreCard from "#/components/score-card"
+import { ScoreCard } from "#/components/score-card"
 
 export default function Home() {
   return (

@@ -107,8 +107,8 @@ const Slider = React.forwardRef<
         onValueCommit={handleOnCommit}
         value={value}
       >
-        <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-primary/20 hover:bg-primary/30 transition-colors duration-200 cursor-pointer">
-          <SliderPrimitive.Range className="absolute h-full bg-primary cursor-pointer" />
+        <SliderPrimitive.Track className="bg-primary/20 hover:bg-primary/30 relative h-1 w-full grow cursor-pointer overflow-hidden rounded-full transition-colors duration-200">
+          <SliderPrimitive.Range className="bg-primary absolute h-full cursor-pointer" />
         </SliderPrimitive.Track>
 
         <Marks marks={markList} onClick={handleChange} thumbSize={thumbSize} />
@@ -116,7 +116,7 @@ const Slider = React.forwardRef<
           <TooltipTrigger asChild>
             <SliderPrimitive.Thumb
               ref={thumb}
-              className="block z-10 text-center h-4 w-4 rounded-full border border-primary/80 hover:border-primary shadow hover:ring-1 ring-primary bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
+              className="border-primary/80 hover:border-primary ring-primary bg-background focus-visible:ring-primary z-10 block h-4 w-4 cursor-pointer rounded-full border text-center shadow transition-all duration-150 hover:ring-1 focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
             />
           </TooltipTrigger>
           <TooltipPortal>
@@ -150,31 +150,32 @@ const Marks = (props: MarkProps) => {
       {marks.map(({ value }) => {
         const offset = thumbSize
           ? getThumbInBoundsOffset(thumbSize.width, value)
-          : 0
+          : getThumbInBoundsOffset(16, value)
         return (
           <span
+            key={`mark dot ${value}`}
             style={{
               left: `calc(${value}% + ${offset * 0.4}px)`,
               transform: "translateX(-50%)",
             }}
             className={cn(
-              "absolute z-0 cursor-pointer block text-center h-1.5 w-1.5 rounded-full border border-slate-300 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+              "bg-background focus-visible:ring-ring absolute z-0 block h-1.5 w-1.5 cursor-pointer rounded-full border border-slate-300 text-center focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50",
               (sharedValues?.[0] ?? 0) >= value && "border-primary"
             )}
           />
         )
       })}
 
-      <div className="w-full absolute top-5">
+      <div className="absolute top-5 w-full">
         {marks.map(({ value, style, label }) => {
           const offset = thumbSize
             ? getThumbInBoundsOffset(thumbSize.width, 50)
-            : 0
+            : getThumbInBoundsOffset(16, value)
           return (
             <span
-              key={value}
+              key={`mark label ${value}`}
               className={cn(
-                "flex justify-center text-xs absolute -translate-x-1/2 transition-colors duration-200 cursor-pointer hover:text-primary",
+                "hover:text-primary absolute flex -translate-x-1/2 cursor-pointer justify-center text-xs transition-colors duration-200",
                 (sharedValues?.[0] ?? 0) >= value
                   ? "text-primary"
                   : "text-primary/40"

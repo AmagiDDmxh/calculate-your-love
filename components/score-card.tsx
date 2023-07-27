@@ -35,9 +35,8 @@ const SLIDER_DATA = [
 type ScoreTuple = [love: number, useness: number, usage: number, value: number]
 const defaultScores: ScoreTuple = [0, 50, 0, 0]
 
-const ScoreCard = () => {
+export const ScoreCard = () => {
   const [scores, setScores] = useState<ScoreTuple>(defaultScores)
-  console.log("🚀 ~ file: score-card.tsx:40 ~ ScoreCard ~ scores:", scores)
   const [love, use, usage, value] = scores
   const totalScore = (
     (love * 0.35 + use * 0.65) * 0.5 +
@@ -57,7 +56,7 @@ const ScoreCard = () => {
                 <h3 className="font-semibold leading-none">{x.section}</h3>
               )}
               <div className="grid grid-cols-3 space-x-4">
-                <p className="col-span-1 leading-7 text-sm">{x.title}</p>
+                <p className="col-span-1 text-sm leading-7">{x.title}</p>
                 <Slider
                   onValueChange={(v) =>
                     setScores(
@@ -78,12 +77,10 @@ const ScoreCard = () => {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="flex items-center justify-end space-x-1 w-full">
+      <CardFooter className="flex w-full items-center justify-end space-x-1">
         <h3 className="leading-none tracking-tight">Total:</h3>
         <p className="text-lg font-semibold">{totalScore}</p>
       </CardFooter>
     </Card>
   )
 }
-
-export default ScoreCard
