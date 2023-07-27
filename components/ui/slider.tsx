@@ -34,101 +34,139 @@ export type SliderProps = React.ComponentPropsWithoutRef<
   marks?: Record<string | number, string | Mark>
 }
 
-let openTimeout: NodeJS.Timeout
+const TOOLTIP_CLOSE_DELAY = 520
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
->(({ className, marks, onValueChange, onValueCommit, ...props }, ref) => {
-  const markList = React.useMemo<InternalMark[]>(() => {
-    if (!marks) {
-      return []
-    }
+>(
+  (
+    {
+      className,
+      marks,
+      onValueChange,
+      onValueCommit,
+      onMouseMove,
+      onMouseLeave,
+      ...props
+    },
+    ref
+  ) => {
+    const markList = React.useMemo<InternalMark[]>(() => {
+      if (!marks) {
+        return []
+      }
 
-    const keys = Object.keys(marks)
+      const keys = Object.keys(marks)
 
-    return keys
-      .map((key) => {
-        const mark = marks[key]
-        const markObj: InternalMark = {
-          value: Number(key),
-        }
+      return keys
+        .map((key) => {
+          const mark = marks[key]
+          const markObj: InternalMark = {
+            value: Number(key),
+          }
 
-        if (
-          typeof mark === "object" &&
-          !React.isValidElement(mark) &&
-          ("label" in mark || "style" in mark)
-        ) {
-          markObj.style = mark.style
-          markObj.label = mark.label
-        } else {
-          markObj.label = mark as string
-        }
+          if (
+            typeof mark === "object" &&
+            !React.isValidElement(mark) &&
+            ("label" in mark || "style" in mark)
+          ) {
+            markObj.style = mark.style
+            markObj.label = mark.label
+          } else {
+            markObj.label = mark as string
+          }
 
-        return markObj
-      })
-      .filter(({ label }) => label || typeof label === "number")
-      .sort((a, b) => a.value - b.value)
-  }, [marks])
+          return markObj
+        })
+        .filter(({ label }) => label || typeof label === "number")
+        .sort((a, b) => a.value - b.value)
+    }, [marks])
 
-  const thumb = React.useRef<HTMLSpanElement | null>(null)
-  const thumbSize = useSize(thumb.current)
+    const thumb = React.useRef<HTMLSpanElement | null>(null)
+    const thumbSize = useSize(thumb.current)
 
-  const [value, setValue] = React.useState<number[]>()
-  const [tooltipOpen, setTooltipOpen] = React.useState(false)
-  const handleChange = (value: number | number[]) => {
-    if (Array.isArray(value)) {
-      setValue(value)
-      onValueChange?.(value)
-    } else {
-      setValue([value])
+    const [value, setValue] = React.useState<number[]>(
+      props.defaultValue ?? props.value ?? [0]
+    )
+    const [tooltipOpening, setTooltipOpen] = React.useState(false)
+    const isOpening = React.useDeferredValue(tooltipOpening)
+    const handleChange = (value: number | number[]) => {
+      setTooltipOpen(true)
+      clearTimeout(openTimeoutRef.current)
+      openTimeoutRef.current = setTimeout(() => {
+        setTooltipOpen(false)
+      }, TOOLTIP_CLOSE_DELAY)
+      if (Array.isArray(value)) {
+        onValueChange?.(value)
+        return setValue(value)
+      }
       onValueChange?.([value])
+      return setValue([value])
     }
-  }
-  const handleOnCommit = (value: number[]) => {
-    setTooltipOpen(true)
-    if (openTimeout) {
-      clearTimeout(openTimeout)
+    let openTimeoutRef = React.useRef<NodeJS.Timeout>()
+    const handleOnCommit = (value: number[]) => {
+      onValueCommit?.(value)
     }
-    openTimeout = setTimeout(() => setTooltipOpen(false), 800)
-    onValueCommit?.(value)
+    const currentValue = value?.[0]
+
+    const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
+      e.stopPropagation()
+      setTooltipOpen(true)
+      onMouseMove?.(e as React.MouseEvent<HTMLDivElement>)
+    }
+
+    const handleMouseUp = (e: React.MouseEvent) => {
+      e.stopPropagation()
+      setTooltipOpen(false)
+      onMouseLeave?.(e as React.MouseEvent<HTMLDivElement>)
+    }
+
+    return (
+      <SliderContext.Provider value={{ value }}>
+        <SliderPrimitive.Root
+          ref={ref}
+          className={cn(
+            "relative flex w-full touch-none select-none items-center transition-all",
+            className
+          )}
+          {...props}
+          onValueChange={handleChange}
+          onValueCommit={handleOnCommit}
+          value={value}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseUp}
+        >
+          <SliderPrimitive.Track className="bg-primary/20 hover:bg-primary/30 relative h-1 w-full grow cursor-pointer overflow-hidden rounded-full transition-colors duration-200">
+            <SliderPrimitive.Range className="bg-primary absolute h-full cursor-pointer" />
+          </SliderPrimitive.Track>
+
+          <Marks
+            marks={markList}
+            onClick={handleChange}
+            thumbSize={thumbSize}
+          />
+          <Tooltip open={isOpening}>
+            <TooltipTrigger asChild>
+              <SliderPrimitive.Thumb
+                ref={thumb}
+                className="border-primary/80 hover:border-primary ring-primary bg-background focus-visible:ring-primary z-10 block h-4 w-4 cursor-pointer rounded-full border text-center shadow transition-all duration-150 hover:ring-1 focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
+                onMouseDown={handleMouseMove}
+                onMouseEnter={handleMouseMove}
+                onMouseLeave={handleMouseUp}
+                // TODO: Touch events
+              />
+            </TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent>
+                <p>{currentValue}</p>
+              </TooltipContent>
+            </TooltipPortal>
+          </Tooltip>
+        </SliderPrimitive.Root>
+      </SliderContext.Provider>
+    )
   }
-  const currentValue = value?.[0]
-
-  return (
-    <SliderContext.Provider value={{ value }}>
-      <SliderPrimitive.Root
-        ref={ref}
-        className={cn(
-          "relative flex w-full touch-none select-none items-center transition-all",
-          className
-        )}
-        {...props}
-        onValueChange={handleChange}
-        onValueCommit={handleOnCommit}
-        value={value}
-      >
-        <SliderPrimitive.Track className="bg-primary/20 hover:bg-primary/30 relative h-1 w-full grow cursor-pointer overflow-hidden rounded-full transition-colors duration-200">
-          <SliderPrimitive.Range className="bg-primary absolute h-full cursor-pointer" />
-        </SliderPrimitive.Track>
-
-        <Marks marks={markList} onClick={handleChange} thumbSize={thumbSize} />
-        <Tooltip open={tooltipOpen}>
-          <TooltipTrigger asChild>
-            <SliderPrimitive.Thumb
-              ref={thumb}
-              className="border-primary/80 hover:border-primary ring-primary bg-background focus-visible:ring-primary z-10 block h-4 w-4 cursor-pointer rounded-full border text-center shadow transition-all duration-150 hover:ring-1 focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
-            />
-          </TooltipTrigger>
-          <TooltipPortal>
-            <TooltipContent>
-              <p>{currentValue}</p>
-            </TooltipContent>
-          </TooltipPortal>
-        </Tooltip>
-      </SliderPrimitive.Root>
-    </SliderContext.Provider>
-  )
-})
+)
 Slider.displayName = SliderPrimitive.Root.displayName
 
 type MarkProps = {

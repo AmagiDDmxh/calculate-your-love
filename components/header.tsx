@@ -7,7 +7,9 @@ import { buttonVariants } from "./ui/button"
 
 export const Header = () => {
   return (
-    <div className="flex items-center justify-end">
+    <div className="flex items-center justify-between">
+      <h3 className="font-semibold">Your Love Calculator</h3>
+
       <Link
         target="_blank"
         rel="noreferrer"
