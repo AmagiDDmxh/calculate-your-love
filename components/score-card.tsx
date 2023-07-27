@@ -33,11 +33,12 @@ const SLIDER_DATA = [
 ]
 
 type ScoreTuple = [love: number, useness: number, usage: number, value: number]
+const defaultScores: ScoreTuple = [0, 50, 0, 0]
 
 const ScoreCard = () => {
-  const [[love, use, usage, value], setScores] = useState<ScoreTuple>([
-    0, 30, 40, 0,
-  ])
+  const [scores, setScores] = useState<ScoreTuple>(defaultScores)
+  console.log("🚀 ~ file: score-card.tsx:40 ~ ScoreCard ~ scores:", scores)
+  const [love, use, usage, value] = scores
   const totalScore = (
     (love * 0.35 + use * 0.65) * 0.5 +
     (usage * 0.5 + value * 0.5) * 0.5
@@ -63,7 +64,7 @@ const ScoreCard = () => {
                       (xs) =>
                         [
                           ...xs.slice(0, index),
-                          v,
+                          v?.[0],
                           ...xs.slice(index + 1),
                         ] as ScoreTuple
                     )
