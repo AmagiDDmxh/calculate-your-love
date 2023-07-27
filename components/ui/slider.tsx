@@ -7,7 +7,6 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
 
 import {
   Tooltip,
-  TooltipArrow,
   TooltipContent,
   TooltipPortal,
   TooltipTrigger,
@@ -33,7 +32,6 @@ export type SliderProps = React.ComponentPropsWithoutRef<
   typeof SliderPrimitive.Root
 > & {
   marks?: Record<string | number, string | Mark>
-  // onChange?: (value: number) => void
 }
 
 let openTimeout: NodeJS.Timeout
