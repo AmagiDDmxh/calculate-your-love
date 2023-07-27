@@ -4,6 +4,7 @@ A Calculator that I use to calculate the loveliness score of projects to decide 
 
 It uses a simple algorithm to score based on each value of selfness and public.
 
+
 ## Built with
 
 - [shadcn/ui](https://ui.shadcn.com/)
