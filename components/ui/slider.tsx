@@ -204,7 +204,7 @@ const Marks = (props: MarkProps) => {
         )
       })}
 
-      <div className="absolute top-5 w-full">
+      <div className="absolute top-6 w-full">
         {marks.map(({ value, style, label }) => {
           const offset = thumbSize
             ? getThumbInBoundsOffset(thumbSize.width, 50)
