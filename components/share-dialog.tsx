@@ -2,8 +2,9 @@ import React from "react"
 import { useMediaQuery } from "#/hooks/useMediaQuery"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { Label } from "@radix-ui/react-label"
-import { Share2Icon, TwitterIcon } from "lucide-react"
+import { ForwardIcon } from "lucide-react"
 
+import { Icons } from "./icons"
 import { Button } from "./ui/button"
 import {
   Dialog,
@@ -28,16 +29,23 @@ export const ShareDialog = () => {
 
   const [open, setOpen] = React.useState(false)
 
+  const shareButton = (
+    <Button variant="default" size="sm" className="group">
+      <ForwardIcon className="mr-2 h-3 w-3 fill-slate-400 stroke-slate-200 transition-colors duration-200 group-hover:fill-white group-hover:stroke-white" />
+      Share
+    </Button>
+  )
+
   if (medium) {
     return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="default" size="sm" className="group">
-            <Share2Icon className="mr-2 h-3 w-3 fill-slate-700 stroke-slate-200 transition-colors duration-200 group-hover:fill-white group-hover:stroke-white" />
-            Share
-          </Button>
+      <Dialog open={open}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
+          {shareButton}
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent
+          className="sm:max-w-[425px]"
+          onClose={() => setOpen(false)}
+        >
           <DialogHeader>
             <DialogTitle>Your Project Name</DialogTitle>
             <DialogDescription>
@@ -54,8 +62,7 @@ export const ShareDialog = () => {
           </div>
           <DialogFooter className="md:space-x-4">
             <Button size="sm" variant="outline" className="group">
-              <TwitterIcon className="stroke-primary mr-2 h-3 w-3 fill-slate-100 transition-colors duration-200 group-hover:fill-slate-800" />{" "}
-              Tweet
+              <Icons.XIcon className="stroke-primary h-3 w-3 fill-slate-100 transition-colors duration-200 group-hover:fill-slate-800" />
             </Button>
             <Button size="sm" type="submit">
               Copy Share Link
@@ -69,10 +76,7 @@ export const ShareDialog = () => {
   return (
     <DialogDrawer dismissible={false} open={open}>
       <DialogDrawerTrigger asChild onClick={() => setOpen(true)}>
-        <Button variant="default" size="sm" className="group">
-          <Share2Icon className="mr-2 h-3 w-3 fill-slate-700 stroke-slate-200 transition-colors duration-200 group-hover:fill-white group-hover:stroke-white" />
-          Share
-        </Button>
+        {shareButton}
       </DialogDrawerTrigger>
       <DialogDrawerContent className="fixed inset-x-0 bottom-0 mt-24 flex flex-col rounded-t-[10px] bg-zinc-100">
         <DialogDrawerClose

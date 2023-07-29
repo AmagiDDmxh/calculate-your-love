@@ -3,13 +3,17 @@ import { siteConfig } from "#/config/site"
 import { cn } from "#/lib/utils"
 import { GithubIcon } from "lucide-react"
 
+import { Icons } from "./icons"
 import { buttonVariants } from "./ui/button"
 
 export const Header = () => {
   return (
     <div className="flex items-center justify-between px-2">
-      <h3 className="font-semibold">Your ❤️ Love Calculator</h3>
-
+      <div className="inline-flex space-x-1">
+        <h3 className="font-semibold">Your</h3>
+        <Icons.LoveIcon />
+        <h3 className="font-semibold">Love Calculator</h3>
+      </div>
       <Link
         target="_blank"
         rel="noreferrer"

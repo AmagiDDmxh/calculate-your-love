@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { useSize } from "#/hooks/useSize"
 import { cn } from "#/lib/utils"
 import * as SliderPrimitive from "@radix-ui/react-slider"
 
@@ -82,9 +81,6 @@ const Slider = React.forwardRef<
         .sort((a, b) => a.value - b.value)
     }, [marks])
 
-    const thumb = React.useRef<HTMLSpanElement | null>(null)
-    const thumbSize = useSize(thumb.current)
-
     const [value, setValue] = React.useState<number[]>(
       props.defaultValue ?? props.value ?? [0]
     )
@@ -137,19 +133,18 @@ const Slider = React.forwardRef<
           onMouseLeave={handleMouseUp}
         >
           <SliderPrimitive.Track className="bg-primary/20 hover:bg-primary/30 relative h-1 w-full grow cursor-pointer overflow-hidden rounded-full transition-colors duration-200">
-            <SliderPrimitive.Range className="bg-primary absolute h-full cursor-pointer" />
+            <SliderPrimitive.Range className="bg-primary data-[disabled]:bg-primary/20 absolute h-full cursor-pointer" />
           </SliderPrimitive.Track>
 
           <Marks
             marks={markList}
             onClick={handleChange}
-            thumbSize={thumbSize}
+            disabled={props.disabled}
           />
           <Tooltip open={isOpening}>
             <TooltipTrigger asChild>
               <SliderPrimitive.Thumb
-                ref={thumb}
-                className="border-primary/80 hover:border-primary ring-primary bg-background focus-visible:ring-primary z-10 block h-4 w-4 cursor-pointer rounded-full border text-center shadow transition-all duration-150 hover:ring-1 focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
+                className="border-primary/80 hover:border-primary ring-primary bg-background data-[disabled]:bg-accent focus-visible:ring-primary data-[disabled]:border-primary/30 z-10 block h-4 w-4 cursor-pointer rounded-full border text-center shadow transition-all duration-150 hover:ring-1 focus-visible:outline-none focus-visible:ring-1 data-[disabled]:pointer-events-none"
                 onMouseDown={handleMouseMove}
                 onMouseEnter={handleMouseMove}
                 onMouseLeave={handleMouseUp}
@@ -172,11 +167,11 @@ Slider.displayName = SliderPrimitive.Root.displayName
 type MarkProps = {
   marks?: InternalMark[]
   onClick?: (value: number) => void
-  thumbSize: ReturnType<typeof useSize>
+  disabled?: boolean
 }
 
 const Marks = (props: MarkProps) => {
-  const { marks, onClick, thumbSize } = props
+  const { marks, onClick, disabled } = props
   const { value: sharedValues } = useSlider()
 
   if (!marks?.length) {
@@ -186,19 +181,19 @@ const Marks = (props: MarkProps) => {
   return (
     <>
       {marks.map(({ value }) => {
-        const offset = thumbSize
-          ? getThumbInBoundsOffset(thumbSize.width, value)
-          : getThumbInBoundsOffset(16, value)
+        const offset = getThumbInBoundsOffset(4, value, value >= 50 ? -1 : 0.2)
         return (
           <span
             key={`mark dot ${value}`}
             style={{
-              left: `calc(${value}% + ${offset * 0.4}px)`,
-              transform: "translateX(-50%)",
+              left: `calc(${value}% + ${offset}px)`,
             }}
             className={cn(
-              "bg-background focus-visible:ring-ring absolute z-0 block h-1.5 w-1.5 cursor-pointer rounded-full border border-slate-300 text-center focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50",
-              (sharedValues?.[0] ?? 0) >= value && "border-primary"
+              "bg-background focus-visible:ring-ring absolute z-0 block h-1.5 w-1.5 cursor-pointer rounded-full border border-slate-300 text-center focus-visible:outline-none focus-visible:ring-1",
+              (sharedValues?.[0] ?? 0) >= value &&
+                !disabled &&
+                "border-primary",
+              disabled && "border-primary/50"
             )}
           />
         )
@@ -206,9 +201,7 @@ const Marks = (props: MarkProps) => {
 
       <div className="absolute top-6 w-full">
         {marks.map(({ value, style, label }) => {
-          const offset = thumbSize
-            ? getThumbInBoundsOffset(thumbSize.width, 50)
-            : getThumbInBoundsOffset(16, value)
+          const offset = getThumbInBoundsOffset(4, value, value >= 50 ? -1 : 2)
           return (
             <span
               key={`mark label ${value}`}
@@ -216,12 +209,12 @@ const Marks = (props: MarkProps) => {
                 "hover:text-primary absolute flex -translate-x-1/2 cursor-pointer justify-center text-xs transition-colors duration-200",
                 (sharedValues?.[0] ?? 0) >= value
                   ? "text-primary"
-                  : "text-primary/40"
+                  : "text-primary/40",
+                disabled && "pointer-events-none"
               )}
               style={{
                 ...style,
-                left: `calc(${value}% + ${offset * 0.4}px)`,
-                transform: "translateX(-50%)",
+                left: `calc(${value}% + ${offset}px)`,
               }}
               onMouseDown={(e) => {
                 e.stopPropagation()
