@@ -4,7 +4,6 @@ import { ScoreCard } from "#/components/score-card"
 
 export default function SharePage() {
   const title = "Make a DeFi Project"
-  const totalScore = 20
 
   if (!title) {
     return notFound()
