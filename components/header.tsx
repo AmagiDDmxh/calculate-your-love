@@ -9,11 +9,11 @@ import { buttonVariants } from "./ui/button"
 export const Header = () => {
   return (
     <div className="flex items-center justify-between px-2">
-      <div className="inline-flex space-x-1">
+      <Link href="/" className="inline-flex space-x-1">
         <h3 className="font-semibold">Your</h3>
         <Icons.LoveIcon />
         <h3 className="font-semibold">Love Calculator</h3>
-      </div>
+      </Link>
       <Link
         target="_blank"
         rel="noreferrer"
