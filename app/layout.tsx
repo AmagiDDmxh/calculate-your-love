@@ -6,6 +6,7 @@ import { Toaster } from "sonner"
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import { Analytics } from "#/components/analytics"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -62,6 +63,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <TooltipProvider delayDuration={150}>
           {children}
+          <Analytics />
           <TailwindIndicator />
         </TooltipProvider>
       </body>
