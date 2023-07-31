@@ -1,4 +1,4 @@
-import { Icons } from "#/components/icons"
+import { Icons } from "#/components/Icons"
 import { siteConfig } from "#/config/site"
 import { ogImageSchema } from "#/lib/validations/og"
 import { ImageResponse } from "@vercel/og"
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
             fontWeight: 600,
           }}
         >
-          <Icons.LoveIcon width={100} height={100} />
+          <Icons.Love width={100} height={100} />
           <div style={{ marginTop: 40 }}>Hello, Lover</div>
         </div>
       )
@@ -65,7 +65,7 @@ export async function GET(req: Request) {
           }}
         >
           <div style={{ display: "flex", alignItems: "flex-end", gap: "1rem" }}>
-            <Icons.LoveIcon width={100} height={100} />
+            <Icons.Love width={100} height={100} />
             <h3
               tw="font-bold text-[48px]"
               style={{

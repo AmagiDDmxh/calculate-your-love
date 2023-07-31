@@ -1,5 +1,7 @@
+import { TailwindIndicator } from "#/components/TailwindIndicator"
 import { TooltipProvider } from "#/components/ui/tooltip"
 import { siteConfig } from "#/config/site"
+import { Toaster } from "sonner"
 
 import "./globals.css"
 import type { Metadata } from "next"
@@ -10,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
+    template: `${siteConfig.name} - %s`,
   },
   description: siteConfig.description,
   keywords: [
@@ -58,7 +60,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <TooltipProvider delayDuration={150}>{children}</TooltipProvider>
+        <TooltipProvider delayDuration={150}>
+          {children}
+          <TailwindIndicator />
+        </TooltipProvider>
       </body>
     </html>
   )

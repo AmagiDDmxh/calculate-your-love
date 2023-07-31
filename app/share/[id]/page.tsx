@@ -1,11 +1,18 @@
 import { notFound } from "next/navigation"
-import { Header } from "#/components/header"
-import { ScoreCard } from "#/components/score-card"
+import { getSharedLove } from "#/app/actions"
+import { Header } from "#/components/Header"
+import { ScoreCard } from "#/components/ScoreCard"
 
-export default function SharePage() {
-  const title = "Make a DeFi Project"
+interface SharePageProps {
+  params: {
+    id: string
+  }
+}
 
-  if (!title) {
+export default async function SharePage({ params }: SharePageProps) {
+  const love = await getSharedLove(params.id)
+
+  if (!love || !love.sharePath) {
     return notFound()
   }
 
@@ -13,7 +20,7 @@ export default function SharePage() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-375px space-y-4">
         <Header />
-        <ScoreCard title={title} />
+        <ScoreCard love={love} />
       </div>
     </main>
   )

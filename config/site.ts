@@ -1,6 +1,7 @@
 export const siteConfig = {
-  name: "Calculate Your Love",
+  name: "Sugoi",
   url: "https://calculate-your-love.vercel.app",
+  shortDescription: 'Your Loves',
   description:
     "Calculate your love about doing something",
   links: {
