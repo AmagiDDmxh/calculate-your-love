@@ -11,6 +11,7 @@ import {
 import { Slider, SliderProps } from "#/components/ui/slider"
 import { useCopyToClipboard } from "#/hooks/useCopyToClipboard"
 import { Love } from "#/lib/types"
+import { getTwitterUrl } from "@phntms/react-share"
 import { useOverlayTriggerState } from "react-stately"
 import { Toaster, toast } from "sonner"
 
@@ -131,6 +132,24 @@ export const ScoreCard = ({ love: sharedLove }: ScoreCardProps) => {
     },
     [copyToClipboard, dialogState]
   )
+  const openXLink = React.useCallback(
+    (love: Love) => {
+      if (!love.sharePath) {
+        return toast.error("Could not open share link")
+      }
+      const url = new URL(window.location.href)
+      const { name, comment } = love
+      url.pathname = love.sharePath
+      const xUrl = getTwitterUrl({
+        text: `I love ${name}, ${comment}`,
+        url: url.toString(),
+      })
+      window.open(xUrl, "_blank")
+      dialogState.close()
+      toast.success("Share link opened in new tab!")
+    },
+    [dialogState]
+  )
 
   const createLove = React.useCallback(
     async (love: Partial<Love>): Promise<Love | { error: string }> => {
@@ -148,6 +167,14 @@ export const ScoreCard = ({ love: sharedLove }: ScoreCardProps) => {
     },
     []
   )
+
+  const handleX = async () => {
+    if (sharedLove?.sharePath) {
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      openXLink(sharedLove)
+      return
+    }
+  }
 
   const handleShare = React.useCallback(
     async (data?: ShareFormData) => {
@@ -237,6 +264,7 @@ export const ScoreCard = ({ love: sharedLove }: ScoreCardProps) => {
             onOpen={dialogState.open}
             onClose={dialogState.close}
             onShare={handleShare}
+            onX={handleX}
           />
 
           <div className="flex items-center space-x-1">

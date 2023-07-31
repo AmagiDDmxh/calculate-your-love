@@ -30,6 +30,7 @@ export interface ShareDialogProps {
   onShare: (data?: ShareFormData) => void
   onOpen: () => void
   onClose: () => void
+  onX: () => void
   love?: Love | null
 }
 
@@ -38,6 +39,7 @@ export const ShareDialog = ({
   onClose,
   onOpen,
   onShare,
+  onX,
   love,
 }: ShareDialogProps) => {
   const { large } = useMediaQuery()
@@ -65,14 +67,20 @@ export const ShareDialog = ({
 
   const shareDialogFooter = (
     <div className="mt-2 flex flex-row justify-end space-x-4 lg:space-x-4">
-      <Button
-        size={large || love ? "sm" : "lg"}
-        variant="outline"
-        className="group"
-        disabled={isLoading}
-      >
-        <Icons.X className="stroke-primary h-3 w-3 fill-slate-100 transition-colors duration-200 group-hover:fill-slate-800" />
-      </Button>
+      {love && (
+        <Button
+          size={large || love ? "sm" : "lg"}
+          variant="outline"
+          className="group"
+          disabled={isLoading}
+          onClick={(e) => {
+            e.preventDefault()
+            onX()
+          }}
+        >
+          <Icons.X className="stroke-primary h-3 w-3 fill-slate-100 transition-colors duration-200 group-hover:fill-slate-800" />
+        </Button>
+      )}
       <Button
         size={large || love ? "sm" : "lg"}
         type="submit"
