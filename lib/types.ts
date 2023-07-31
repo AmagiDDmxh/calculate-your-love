@@ -1,4 +1,3 @@
-
 export type Scores = {
   love: number
   usefulness: number

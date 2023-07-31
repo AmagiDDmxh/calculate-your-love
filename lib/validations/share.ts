@@ -11,5 +11,4 @@ export const shareSchema = z.object({
     z.literal(""),
   ]),
   comment: z.union([z.string().min(2).max(256).optional(), z.literal("")]),
-
 })
