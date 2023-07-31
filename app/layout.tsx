@@ -1,12 +1,11 @@
 import { TailwindIndicator } from "#/components/TailwindIndicator"
 import { TooltipProvider } from "#/components/ui/tooltip"
 import { siteConfig } from "#/config/site"
-import { Toaster } from "sonner"
 
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { Analytics } from "#/components/analytics"
+import { Analytics } from "#/components/Analytics"
 
 const inter = Inter({ subsets: ["latin"] })
 
