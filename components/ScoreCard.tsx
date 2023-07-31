@@ -221,7 +221,7 @@ export const ScoreCard = ({ love: sharedLove }: ScoreCardProps) => {
                       )
                     }
                     className="col-span-2"
-                    defaultValue={[x.step ?? 0]}
+                    defaultValue={sharedLove ? [scores[index]] : [x.step ?? 0]}
                     marks={x.marks as SliderProps["marks"]}
                     disabled={!!sharedLove}
                   />
