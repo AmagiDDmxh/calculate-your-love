@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Image from "next/image"
 import {
   Card,
   CardContent,
@@ -11,11 +12,13 @@ import {
 import { Slider, SliderProps } from "#/components/ui/slider"
 import { useCopyToClipboard } from "#/hooks/useCopyToClipboard"
 import { Love } from "#/lib/types"
+import { cn } from "#/lib/utils"
 import { getTwitterUrl } from "@phntms/react-share"
 import { useOverlayTriggerState } from "react-stately"
 import { Toaster, toast } from "sonner"
 
 import { ShareDialog, ShareFormData } from "./ShareDialog"
+import { buttonVariants } from "./ui/button"
 
 const SLIDER_DATA = [
   {
@@ -56,11 +59,14 @@ const THINGS_PLACEHOLDERS = [
   "make an ai chat",
 ]
 
-type ScoreCardProps = {
+type ScoreCardProps = React.HTMLAttributes<HTMLDivElement> & {
   love?: Love | null
 }
 
-export const ScoreCard = ({ love: sharedLove }: ScoreCardProps) => {
+export const ScoreCard = ({
+  love: sharedLove,
+  ...cardProps
+}: ScoreCardProps) => {
   const [scores, setScores] = React.useState<ScoreTuple>(() => {
     if (sharedLove) {
       const { love, usefulness, usage, value } = sharedLove.scores
@@ -86,31 +92,67 @@ export const ScoreCard = ({ love: sharedLove }: ScoreCardProps) => {
 
   const scoreHeaderContent = React.useMemo(() => {
     if (sharedLove) {
+      // Remove last '/' chars
+      const normalizedLink = sharedLove.link?.replace(/\/+$/, "")
+
       return (
-        <div className="flex flex-col space-y-1">
-          <CardTitle className="text-md font-medium">
-            My Score to{" "}
-            <span className="text-base font-bold">{sharedLove.name}</span> is{" "}
-            <span className="text-base font-bold">{totalScore}</span>
-          </CardTitle>
-          {sharedLove.comment && (
-            <p className="text-sm font-normal text-slate-700">
-              {sharedLove.comment}
-            </p>
+        <div className="flex flex-col space-y-2">
+          {!!normalizedLink && (
+            <a
+              href={normalizedLink}
+              target="_blank"
+              className="overflow-hidden bg-slate-400"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${normalizedLink}/og.jpg`}
+                width="100%"
+                alt={`Cover to ${sharedLove.name}`}
+                className="transition-transform hover:scale-105"
+              />
+            </a>
           )}
+          <a
+            href={normalizedLink}
+            target="_blank"
+            className="text-2xl font-bold underline-offset-4 hover:underline"
+          >
+            {sharedLove.name}
+          </a>
+          <div className="flex flex-col space-y-1">
+            <CardTitle className="text-md font-medium">
+              My Score to{" "}
+              <a
+                href={normalizedLink}
+                target="_blank"
+                className={cn(
+                  buttonVariants({ variant: "link", size: "sm" }),
+                  "px-0 text-base font-bold"
+                )}
+              >
+                {sharedLove.name}
+              </a>{" "}
+              is <span className="text-base font-bold">{totalScore}</span>
+            </CardTitle>
+            {sharedLove.comment && (
+              <p className="text-md font-normal text-slate-900">
+                {sharedLove.comment}
+              </p>
+            )}
+          </div>
         </div>
       )
     }
 
     return (
-      <>
+      <div className="flex space-x-1">
         <CardTitle className="text-md font-medium">
           Score your love to
         </CardTitle>
         <CardTitle className="text-md font-bold transition-all">
           {THINGS_PLACEHOLDERS[transitionNumber]}
         </CardTitle>
-      </>
+      </div>
     )
   }, [sharedLove, totalScore, transitionNumber])
 
@@ -221,42 +263,54 @@ export const ScoreCard = ({ love: sharedLove }: ScoreCardProps) => {
     <>
       <Toaster position="top-center" />
 
-      <Card className="w-[350px]">
-        <CardHeader className="mb-2 flex flex-row items-center space-x-1 space-y-0 border-b pb-6">
+      <Card
+        className={cn(
+          "overflow-hidden",
+          sharedLove ? "w-[512px]" : "w-[350px]"
+        )}
+        {...cardProps}
+      >
+        <CardHeader className="mb-2 border-b pb-6">
           {scoreHeaderContent}
         </CardHeader>
-        <CardContent>
-          <div className="grid w-full space-y-8 pr-6">
-            {SLIDER_DATA.map((x, index) => (
-              <div className="flex flex-col space-y-4" key={x.title}>
-                {x.section && (
-                  <h3 className="mt-4 font-semibold leading-none">
-                    {x.section}
-                  </h3>
-                )}
-                <div className="grid grid-cols-3 space-x-4">
-                  <p className="text-sm leading-7">{x.title}</p>
-                  <Slider
-                    onValueChange={(v) =>
-                      setScores(
-                        (xs) =>
-                          [
-                            ...xs.slice(0, index),
-                            v?.[0],
-                            ...xs.slice(index + 1),
-                          ] as ScoreTuple
-                      )
-                    }
-                    className="col-span-2"
-                    defaultValue={sharedLove ? [scores[index]] : [x.step ?? 0]}
-                    marks={x.marks as SliderProps["marks"]}
-                    disabled={!!sharedLove}
-                  />
+        {!sharedLove && (
+          <CardContent>
+            <div className="grid w-full space-y-8 pr-6">
+              {SLIDER_DATA.map((x, index) => (
+                <div className="flex flex-col space-y-4" key={x.title}>
+                  {x.section && (
+                    <h3 className="mt-4 font-semibold leading-none">
+                      {x.section}
+                    </h3>
+                  )}
+                  <div className="grid grid-cols-3 space-x-4">
+                    <p className="text-sm leading-7">{x.title}</p>
+                    <Slider
+                      onValueChange={(v) =>
+                        setScores(
+                          (xs) =>
+                            [
+                              ...xs.slice(0, index),
+                              v?.[0],
+                              ...xs.slice(index + 1),
+                            ] as ScoreTuple
+                        )
+                      }
+                      className="col-span-2"
+                      defaultValue={
+                        sharedLove ? [scores[index]] : [x.step ?? 0]
+                      }
+                      marks={x.marks as SliderProps["marks"]}
+                      disabled={!!sharedLove}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
+              ))}
+            </div>
+          </CardContent>
+        )}
+        {/* Spacer */}
+        {sharedLove && <div className="h-2" />}
         <CardFooter className="mt-2 flex w-full items-center justify-between">
           <ShareDialog
             love={sharedLove}

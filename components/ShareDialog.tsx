@@ -66,7 +66,7 @@ export const ShareDialog = ({
   const isLoading = isSharing || isSubmitting
 
   const shareDialogFooter = (
-    <div className="mt-2 flex flex-row justify-end space-x-4 lg:space-x-4">
+    <div className="flex flex-row justify-end space-x-4 lg:space-x-4">
       {love && (
         <Button
           size={large || love ? "sm" : "lg"}
