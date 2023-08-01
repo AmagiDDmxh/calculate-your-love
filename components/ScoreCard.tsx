@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import Image from "next/image"
 import {
   Card,
   CardContent,
@@ -52,11 +51,15 @@ type ScoreTuple = [love: number, useness: number, usage: number, value: number]
 const defaultScores: ScoreTuple = [0, 50, 0, 0]
 
 const THINGS_PLACEHOLDERS = [
+  "make a TODO app",
   "design",
   "code",
+  "a youtuber",
   "exercise",
-  "make a TODO app",
   "make an ai chat",
+  "an influencer",
+  "a product",
+  "a dev tool",
 ]
 
 type ScoreCardProps = React.HTMLAttributes<HTMLDivElement> & {
