@@ -1,16 +1,17 @@
 "use client"
 
-import React from "react"
+import React, { startTransition } from "react"
 import Link from "next/link"
 import { siteConfig } from "#/config/site"
 import { cn } from "#/lib/utils"
-import { GithubIcon } from "lucide-react"
+import { GithubIcon, LightbulbIcon } from "lucide-react"
+import { useTheme } from "next-themes"
 
 import { Icons } from "./Icons"
-import { buttonVariants } from "./ui/button"
+import { Button, buttonVariants } from "./ui/button"
 
 export const Header = () => {
-  // const { setTheme, theme } = useTheme()
+  const { setTheme, theme } = useTheme()
   // const [_, startTransition] = React.useTransition()
 
   return (
@@ -40,10 +41,10 @@ export const Header = () => {
           <h5>Source</h5>
         </Link>
         {/* TODO: Theme switcher */}
-        {/* <Button
+        <Button
           size="sm"
-          variant="ghost"
-          className="group drop-shadow-2xl transition-all hover:shadow-slate-900 dark:shadow-2xl dark:shadow-slate-400"
+          variant="outline"
+          // className="group drop-shadow-2xl transition-all hover:shadow-slate-900 dark:shadow-2xl dark:shadow-slate-400"
           onClick={() => {
             startTransition(() => {
               setTheme(theme === "light" ? "dark" : "light")
@@ -61,7 +62,7 @@ export const Header = () => {
             />
           )}
           <span className="sr-only">Toggle theme</span>
-        </Button> */}
+        </Button>
       </div>
     </div>
   )

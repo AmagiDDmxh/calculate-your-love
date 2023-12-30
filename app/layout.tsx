@@ -1,11 +1,11 @@
 import { TailwindIndicator } from "#/components/TailwindIndicator"
-import { TooltipProvider } from "#/components/ui/tooltip"
 import { siteConfig } from "#/config/site"
 
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "#/components/Analytics"
+import { Providers } from "#/components/Providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -58,13 +58,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <TooltipProvider delayDuration={150}>
+        <Providers attribute="class" defaultTheme="system" enableSystem>
           {children}
           <Analytics />
           <TailwindIndicator />
-        </TooltipProvider>
+        </Providers>
+        <script
+          defer
+          data-domain="sugoiyo.vercel.app"
+          src="https://plausible.io/js/script.js"
+        />
       </body>
     </html>
   )
