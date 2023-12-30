@@ -67,7 +67,7 @@ export default function RootLayout({
         </Providers>
         <script
           defer
-          data-domain="sugoiyo.vercel.app"
+          data-domain="sugoi.amagi.love"
           src="https://plausible.io/js/script.js"
         />
       </body>
